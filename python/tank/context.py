@@ -99,7 +99,14 @@ class Context(object):
         
         elif self.entity is None:
             # project-only, e.g 'Project foobar'
-            ctx_name = "Project %s" % self.project.get("name")
+            project_name = self.project.get("name")
+            if isinstance(project_name, unicode):
+                # We might end up with a unicode decode error, so we need
+                # to encode here to handle any non-ascii characters in the
+                # name.
+                project_name = project_name.encode("utf-8")
+
+            ctx_name = "Project %s" % project_name
         
         elif self.step is None and self.task is None:
             # entity only
@@ -110,10 +117,14 @@ class Context(object):
                 self.__tk,
                 self.entity.get("type")
             )
-            
+
+            entity_name = self.entity.get("name")
+            if isinstance(entity_name, unicode):
+                entity_name = entity_name.encode("utf-8")
+
             ctx_name = "%s %s" % (
                 entity_display_name,
-                self.entity.get("name")
+                entity_name
             )
 
         else:
@@ -123,6 +134,9 @@ class Context(object):
                 task_step = self.step.get("name")
             if self.task:
                 task_step = self.task.get("name")
+
+            if isinstance(task_step, unicode):
+                task_step = task_step.encode("utf-8")
             
             # e.g. Lighting, Shot ABC_123
             
@@ -131,11 +145,15 @@ class Context(object):
                 self.__tk,
                 self.entity.get("type")
             )
+
+            entity_name = self.entity.get("name")
+            if isinstance(entity_name, unicode):
+                entity_name = entity_name.encode("utf-8")
             
             ctx_name = "%s, %s %s" % (
                 task_step,
                 entity_display_name,
-                self.entity.get("name")
+                entity_name
             )
         
         return ctx_name
@@ -1567,31 +1585,12 @@ def _entity_from_sg(tk, entity_type, entity_id):
 
     # create context
     context = {}
-
-    entity_name = data.get(name_field)
-
-    # We need to properly handle entity names that might contain characters
-    # that won't decode to str properly. If we have a unicode string, we
-    # will encode it as utf-8.
-    if isinstance(entity_name, unicode):
-        entity_name = entity_name.encode("utf-8")
     
     if entity_type == "Project":
-        context["project"] = {"type":"Project", "id": entity_id, "name": entity_name }
+        context["project"] = {"type":"Project", "id": entity_id, "name": data.get(name_field) }
+    
     else:
-        context["entity"] = {"type": entity_type, "id": entity_id, "name": entity_name }
-
-        # We have the same situation here with the entity's parent Project entity.
-        # We need to make sure we have a str name for the Project entity to ensure
-        # that we don't run into any UnicodeDecodeErrors later on.
-        project_entity = data.get("project")
-        project_name_field = _get_entity_type_sg_name_field("Project")
-
-        if project_entity and project_entity.get(project_name_field):
-            if isinstance(project_entity.get(project_name_field), unicode):
-                project_name = project_entity[project_name_field]
-                project_entity[project_name_field] = project_name.encode("utf-8")
-
+        context["entity"] = {"type": entity_type, "id": entity_id, "name": data.get(name_field) }
         context["project"] = data.get("project")     
 
     return context
