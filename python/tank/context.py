@@ -1567,12 +1567,31 @@ def _entity_from_sg(tk, entity_type, entity_id):
 
     # create context
     context = {}
+
+    entity_name = data.get(name_field)
+
+    # We need to properly handle entity names that might contain characters
+    # that won't decode to str properly. If we have a unicode string, we
+    # will encode it as utf-8.
+    if isinstance(entity_name, unicode):
+        entity_name = entity_name.encode("utf-8")
     
     if entity_type == "Project":
-        context["project"] = {"type":"Project", "id": entity_id, "name": data.get(name_field) }
-    
+        context["project"] = {"type":"Project", "id": entity_id, "name": entity_name }
     else:
-        context["entity"] = {"type": entity_type, "id": entity_id, "name": data.get(name_field) }
+        context["entity"] = {"type": entity_type, "id": entity_id, "name": entity_name }
+
+        # We have the same situation here with the entity's parent Project entity.
+        # We need to make sure we have a str name for the Project entity to ensure
+        # that we don't run into any UnicodeDecodeErrors later on.
+        project_entity = data.get("project")
+        project_name_field = _get_entity_type_sg_name_field("Project")
+
+        if project_entity and project_entity.get(project_name_field):
+            if isinstance(project_entity.get(project_name_field), unicode):
+                project_name = project_entity[project_name_field]
+                project_entity[project_name_field] = project_name.encode("utf-8")
+
         context["project"] = data.get("project")     
 
     return context
