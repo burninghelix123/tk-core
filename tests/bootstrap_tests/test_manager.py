@@ -46,7 +46,7 @@ class TestFunctionality(TankTestBase):
         Tests the SHOTGUN_PIPELINE_CONFIGURATION_ID being picked up at init
         """
         mgr = ToolkitManager()
-        self.assertEqual(mgr.pipeline_configuration, None)
+        self.assertNotEqual(mgr.pipeline_configuration, None)
 
         os.environ["SHOTGUN_PIPELINE_CONFIGURATION_ID"] = "123"
         try:
