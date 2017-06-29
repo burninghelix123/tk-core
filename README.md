@@ -1,7 +1,7 @@
 | OS      | Status |
 | ------- | ------ |
-| Linux   | [![Build Status](https://secure.travis-ci.org/shotgunsoftware/tk-core.png?branch=master)](http://travis-ci.org/shotgunsoftware/tk-core) |
-| Windows | [![Build status](https://ci.appveyor.com/api/projects/status/wa0nkvpawf6020fi/branch/master?svg=true)](https://ci.appveyor.com/project/jfboismenu/tk-core/branch/master) |
+| Linux   | <center>[![Build Status](https://secure.travis-ci.org/shotgunsoftware/tk-core.png?branch=master)](http://travis-ci.org/shotgunsoftware/tk-core)</center> |
+| Windows | <center>[![Build status](https://ci.appveyor.com/api/projects/status/wa0nkvpawf6020fi/branch/master?svg=true)](https://ci.appveyor.com/project/jfboismenu/tk-core/branch/master)</center> |
 
 [![Coverage Status](https://coveralls.io/repos/github/shotgunsoftware/tk-core/badge.svg?branch=master)](https://coveralls.io/github/shotgunsoftware/tk-core?branch=master)
 
